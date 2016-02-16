@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZSAPLINK_NUMBER_RANGES" VERSION="1" LANGU="E" DESCRIPT="SAPlink - Number Ranges" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk" REFCLSNAME="ZSAPLINK">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <inheritance CLSNAME="ZSAPLINK_NUMBER_RANGES" REFCLSNAME="ZSAPLINK" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZSAPLINK_NUMBER_RANGES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CHECKEXISTS"/>
+  <redefinition CLSNAME="ZSAPLINK_NUMBER_RANGES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEIXMLDOCFROMOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_NUMBER_RANGES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEOBJECTFROMIXMLDOC"/>
+  <redefinition CLSNAME="ZSAPLINK_NUMBER_RANGES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="DELETEOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_NUMBER_RANGES" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="GETOBJECTTYPE"/>
+ </inheritance>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD checkexists.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  DATA: l_name TYPE nrobj.
+
+  l_name = objname.
+
+  CALL FUNCTION &apos;NUMBER_RANGE_OBJECT_GET_INFO&apos;
+    EXPORTING
+      object                 = l_name
+*   IMPORTING
+*     INFO                   =
+   EXCEPTIONS
+     object_not_found       = 1
+     OTHERS                 = 2
+            .
+  IF sy-subrc IS INITIAL.
+    exists = abap_true.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD createixmldocfromobject.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  DATA: lv_interval_exists TYPE abap_bool,
+        ls_obj_attrs  TYPE  tnro,
+        ls_obj_text TYPE  tnrot,
+        lt_intervals TYPE STANDARD TABLE OF inriv.
+
+  FIELD-SYMBOLS: &lt;fs_interval&gt; TYPE inriv.
+
+  DATA: _objtype   TYPE string,
+        _objname   TYPE nrobj,
+*xml nodes
+        lr_rootnode   TYPE REF TO if_ixml_element,
+        lr_node TYPE REF TO if_ixml_element,
+        lv_rc         TYPE sysubrc.
+
+  _objname = objname.
+  _objtype = getobjecttype( ).
+
+  CALL FUNCTION &apos;NUMBER_RANGE_OBJECT_READ&apos;
+    EXPORTING
+      object            = _objname
+    IMPORTING
+      interval_exists   = lv_interval_exists
+      object_attributes = ls_obj_attrs
+      object_text       = ls_obj_text
+    EXCEPTIONS
+      object_not_found  = 1
+      OTHERS            = 2.
+  IF sy-subrc &lt;&gt; 0.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;not_found.
+  ENDIF.
+
+  IF lv_interval_exists EQ abap_true.
+    CALL FUNCTION &apos;NUMBER_RANGE_INTERVAL_LIST&apos;
+      EXPORTING
+        object                           = _objname
+*       SUBOBJECT                        = &apos; &apos;
+*       CLEAR_LOCAL_MEMORY               = &apos; &apos;
+      TABLES
+        interval                         = lt_intervals
+     EXCEPTIONS
+       object_not_found                 = 6
+       OTHERS                           = 9
+              .
+    IF sy-subrc &lt;&gt; 0.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;not_found.
+    ENDIF.
+  ENDIF.
+
+* Create parent node
+  lr_rootnode = xmldoc-&gt;create_element( _objtype ).
+  setattributesfromstructure( node = lr_rootnode structure = ls_obj_attrs ).
+
+* Create object texts node
+  lr_node = xmldoc-&gt;create_element( &apos;TNROT&apos; ).
+  setattributesfromstructure( node = lr_node structure = ls_obj_text ).
+  lv_rc = lr_rootnode-&gt;append_child( lr_node ).
+
+* Add all Number Ranges, if exist
+  LOOP AT lt_intervals ASSIGNING &lt;fs_interval&gt;.
+    lr_node = xmldoc-&gt;create_element( &apos;INRIV&apos; ).
+    setattributesfromstructure( node = lr_node structure = &lt;fs_interval&gt; ).
+    lv_rc = lr_rootnode-&gt;append_child( lr_node ).
+  ENDLOOP.
+
+* Finally submit prepared XML
+  lv_rc = xmldoc-&gt;append_child( lr_rootnode ).
+  ixmldocument = xmldoc.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD createobjectfromixmldoc.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  DATA: lv_retcode TYPE abap_bool,
+        ls_obj_attrs  TYPE  tnro,
+        ls_obj_text TYPE  tnrot,
+        lt_intervals TYPE STANDARD TABLE OF inriv,
+        lt_int_errs TYPE STANDARD TABLE OF inriv,
+        ls_interval TYPE inriv,
+        lt_errors TYPE STANDARD TABLE OF inoer.
+
+  DATA: _objtype   TYPE string,
+        _objname   TYPE nrobj,
+        _devclass  TYPE string,
+*xml nodes
+        lr_rootnode   TYPE REF TO if_ixml_element,
+        lr_node       TYPE REF TO if_ixml_element,
+        lr_filter     TYPE REF TO if_ixml_node_filter,
+        lr_iterator   TYPE REF TO if_ixml_node_iterator,
+        lv_rc         TYPE sysubrc.
+
+  _devclass = devclass.
+  _objtype = getobjecttype( ).
+
+*get root element
+  xmldoc = ixmldocument.
+  lr_rootnode = xmldoc-&gt;find_from_name( _objtype ).
+
+*get object attributes
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node      = lr_rootnode
+    CHANGING
+      structure = ls_obj_attrs.
+
+  _objname = ls_obj_attrs-object.
+  objname = _objname.
+
+*existance check, replace if requred
+  IF checkexists( ) IS NOT INITIAL.
+    IF overwrite IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;existing.
+    ELSE.
+*     delete object for new install
+      deleteobject( ).
+    ENDIF.
+  ENDIF.
+
+*get object texts
+  lr_node = lr_rootnode-&gt;find_from_name( &apos;TNROT&apos; ).
+  IF lr_node IS NOT BOUND.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;incorrect_file_format.
+  ENDIF.
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node      = lr_node
+    CHANGING
+      structure = ls_obj_text.
+
+*retrieve interval details
+  FREE: lr_filter, lr_iterator, lr_node.
+  lr_filter = xmldoc-&gt;create_filter_name( &apos;INRIV&apos; ).
+  lr_iterator = xmldoc-&gt;create_iterator_filtered( lr_filter ).
+  lr_node ?= lr_iterator-&gt;get_next( ).
+
+  WHILE lr_node IS BOUND.
+    CALL METHOD getstructurefromattributes
+      EXPORTING
+        node      = lr_node
+      CHANGING
+        structure = ls_interval.
+    ls_interval-procind = &apos;I&apos;.
+    APPEND ls_interval TO lt_intervals.
+    lr_node ?= lr_iterator-&gt;get_next( ).
+  ENDWHILE.
+
+*create/update number range object
+  &quot;make lock
+  CALL FUNCTION &apos;ENQUEUE_ESTNRO&apos;
+    EXPORTING
+      object       = _objname
+    EXCEPTIONS
+      foreign_lock = 1.
+  IF sy-subrc NE 0.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  CALL FUNCTION &apos;NUMBER_RANGE_OBJECT_UPDATE&apos;
+    EXPORTING
+      indicator                 = &apos;I&apos;
+      object_attributes         = ls_obj_attrs
+      object_text               = ls_obj_text
+    IMPORTING
+      returncode                = lv_retcode
+    TABLES
+      errors                    = lt_errors
+    EXCEPTIONS
+      object_already_exists     = 1
+      object_attributes_missing = 2
+      object_not_found          = 3
+      object_text_missing       = 4
+      wrong_indicator           = 5
+      OTHERS                    = 6.
+  IF sy-subrc &lt;&gt; 0.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  &quot;insert into DDIC
+  DATA: ls_ko200 TYPE ko200,
+        lt_ko200 TYPE STANDARD TABLE OF ko200.
+  DATA: h_subrc TYPE sy-subrc.
+
+  ls_ko200-pgmid = &apos;R3TR&apos;.
+  ls_ko200-object = _objtype.
+  ls_ko200-obj_name = _objname.
+  ls_ko200-devclass = _devclass.
+  APPEND ls_ko200 TO lt_ko200.
+
+  CALL FUNCTION &apos;TRINT_OBJECTS_CHECK_AND_INSERT&apos;
+    EXPORTING
+      iv_with_dialog               = &apos; &apos;
+      iv_send_message              = &apos;X&apos;
+    CHANGING
+      ct_ko200                     = lt_ko200
+    EXCEPTIONS
+      show_only_user_after_error   = 1
+      cancel_edit_user_after_error = 2
+      OTHERS                       = 3.
+
+  IF sy-subrc IS NOT INITIAL.
+    h_subrc = sy-subrc.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+  IF h_subrc IS INITIAL.
+    CALL FUNCTION &apos;NUMBER_RANGE_OBJECT_CLOSE&apos;
+      EXPORTING
+        object = _objname.
+    COMMIT WORK AND WAIT.
+  ENDIF.
+
+  &quot;release lock
+  CALL FUNCTION &apos;DEQUEUE_ESTNRO&apos;
+    EXPORTING
+      object = _objname.
+
+*update intervals
+
+  &quot;make lock
+  CALL FUNCTION &apos;NUMBER_RANGE_ENQUEUE&apos;
+    EXPORTING
+      object       = _objname
+    EXCEPTIONS
+      foreign_lock = 01.
+  IF sy-subrc IS NOT INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  CALL FUNCTION &apos;NUMBER_RANGE_UPDATE_INIT&apos;
+    EXPORTING
+      object           = _objname
+    EXCEPTIONS
+      object_not_found = 1.
+  IF sy-subrc IS NOT INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  CALL FUNCTION &apos;NUMBER_RANGE_INTERVAL_UPDATE&apos;
+    EXPORTING
+      object                 = _objname
+   IMPORTING
+*     ERROR                  =
+     error_occured          = lv_retcode
+*     WARNING_OCCURED        =
+    TABLES
+      error_iv               = lt_int_errs
+      interval               = lt_intervals
+   EXCEPTIONS
+     object_not_found       = 1
+     OTHERS                 = 2
+            .
+  IF sy-subrc IS NOT INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  CALL FUNCTION &apos;NUMBER_RANGE_UPDATE_CLOSE&apos;
+    EXPORTING
+      object          = _objname
+    EXCEPTIONS
+      no_changes_made = 1.
+  COMMIT WORK AND WAIT.
+
+  &quot;release lock
+  CALL FUNCTION &apos;NUMBER_RANGE_DEQUEUE&apos;
+    EXPORTING
+      object           = _objname
+    EXCEPTIONS
+      object_not_found = 01.
+  IF sy-subrc IS NOT INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+  name = _objname.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD deleteobject.
+
+  CALL FUNCTION &apos;NUMBER_RANGE_OBJECT_DELETE&apos;
+    EXPORTING
+*     INDICATOR                = &apos; &apos;
+*     LANGUAGE                 = SY-LANGU
+      object                   = objname
+*     OHNE_TP_FLAG             =
+   EXCEPTIONS
+     delete_not_allowed       = 1
+     object_not_found         = 2
+     wrong_indicator          = 3
+     OTHERS                   = 4
+            .
+  IF sy-subrc &lt;&gt; 0.
+    RAISE EXCEPTION TYPE zcx_saplink
+      EXPORTING
+        textid = zcx_saplink=&gt;system_error.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method GETOBJECTTYPE.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  objecttype = &apos;NROB&apos;.  &quot;Number Ranges
+endmethod.</source>
+ </method>
+</CLAS>

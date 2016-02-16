@@ -8,7 +8,7 @@
 
 ## SAPLinkee
   Used to store single ABAP Object into a file, usually for SAPLink plugins
-  
+
 ## SAPLink Plugin
 * Should inherit from Super class **ZSAPLINK**
 * Implement following minimum methods for a Plugin
@@ -18,6 +18,17 @@
   * **CREATEOBJECTFROMIXMLDOC** - fetch XML from import parameter **IXMLDOCUMENT** and create into SAP DB
   * **DELETEOBJECT** - delete object if Overwrite is selected
 
+# Custom Plugins Developed (dev/plugins)
+  * **CLAS_ZSAPLINK_NUMBER_RANGES.slnk** - Number Ranges
+
+# Installing SAPLink
+  * for latest **SAPLINK** installer zip, check [SAPLink Wiki](https://www.assembla.com/spaces/saplink-plugins/wiki)
+  * Download **SAPlink_Daily.nugg.zip** from trunk/build
+  * Copy code inside **ZSAPLINK_INSTALLER.TXT** file to a ABAP Report
+  * Execute the report and provide **SAPlink_Daily.nugg** as input (Note: import it twice to avoid importing issues)
+  * Activate all ***Worklist*** objects in **$TMP**
+  * Use **SAPLINK** report to import/export Nuggets and SLinkees.
+  
 ## Header Info
 ```
 */---------------------------------------------------------------------\

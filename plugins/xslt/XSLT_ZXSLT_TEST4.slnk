@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<XSLT XSLTDESC="ZXSLT_TEST4" AUTHOR="DEVELOPER" CREATEDON="20061226" CHANGEDBY="DEVELOPER" CHANGEDON="20061226" DEVCLASS="$TMP" LANGU="E" DESCRIPT="test w">
+ <source>&lt;?sap.transform simple?&gt;
+&lt;tt:transform xmlns:tt=&quot;http://www.sap.com/transformation-templates&quot;&gt;
+
+&lt;tt:root name=&quot;ROOT&quot;/&gt;
+
+&lt;tt:template&gt;
+&lt;/tt:template&gt;
+
+&lt;/tt:transform&gt;</source>
+</XSLT>
