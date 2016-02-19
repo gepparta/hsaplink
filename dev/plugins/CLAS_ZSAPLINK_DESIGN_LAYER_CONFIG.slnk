@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLAS CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" VERSION="1" LANGU="E" DESCRIPT="SAPlink - DLCC CRM UIF, Dyn Layout Config / Customer Layer" CATEGORY="00" EXPOSURE="2" STATE="1" RELEASE="0" CLSCCINCL="X" FIXPT="X" UNICODE="X" CLSBCCAT="00" DURATION_TYPE="0 " RISK_LEVEL="0 " ZSAPLINK_PLUGIN_MAJOR_VERSION="0 " ZSAPLINK_PLUGIN_MINOR_VERSION="1 " ZSAPLINK_PLUGIN_BUILD_VERSION="0 " ZSAPLINK_PLUGIN_INFO1="ZSAPLINK_CLASS is part of the main ZSAPLINK project --&gt; This plugin found there instead of ZSAPLINK_PLUGINS projects" ZSAPLINK_PLUGIN_INFO2="SAPLINK homepage: https://www.assembla.com/spaces/saplink/wiki" ZSAPLINK_PLUGIN_INFO3="Download from https://www.assembla.com/code/saplink/subversion/nodes" ZSAPLINK_PLUGIN_INFO4="and navigate to:  trunk -&gt; core -&gt; ZSAPLINK -&gt; CLAS -&gt; ZSAPLINK_CLASS.slnk" REFCLSNAME="ZSAPLINK">
+ <localImplementation>*&quot;* local class implementation for public class
+*&quot;* use this source file for the implementation part of
+*&quot;* local helper classes</localImplementation>
+ <localTypes>*&quot;* use this source file for any type declarations (class
+*&quot;* definitions, interfaces or data types) you need for method
+*&quot;* implementation or private method&apos;s signature</localTypes>
+ <localMacros>*&quot;* use this source file for any macro definitions you need
+*&quot;* in the implementation part of the class</localMacros>
+ <inheritance CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" REFCLSNAME="ZSAPLINK" VERSION="1" STATE="1">
+  <redefinition CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CHECKEXISTS"/>
+  <redefinition CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEIXMLDOCFROMOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="CREATEOBJECTFROMIXMLDOC"/>
+  <redefinition CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="DELETEOBJECT"/>
+  <redefinition CLSNAME="ZSAPLINK_DESIGN_LAYER_CONFIG" REFCLSNAME="ZSAPLINK" VERSION="1" MTDNAME="GETOBJECTTYPE"/>
+ </inheritance>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CHECKEXISTS" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD checkexists.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  DATA: l_name TYPE nrobj.
+
+  l_name = objname.
+
+  SELECT SINGLE context_id FROM bspc_dl_xmlstrx2 INTO l_name WHERE context_id EQ objname.
+
+  IF sy-subrc IS INITIAL.
+    exists = abap_true.
+  ENDIF.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEIXMLDOCFROMOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD createixmldocfromobject.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  DATA: _objtype   TYPE string,
+        _objname   TYPE nrobj,
+*xml nodes
+        lr_rootnode   TYPE REF TO if_ixml_element,
+        lr_node TYPE REF TO if_ixml_element,
+        lv_rc         TYPE sysubrc,
+*dlc variables
+        ls_dlc TYPE bspc_dl_xmlstrx2,
+        lv_config TYPE bsp_dlc_xml_xstring,
+        lv_params TYPE bsp_dlc_xml_xstring,
+        lv_string TYPE string.
+
+  _objname = objname.
+  _objtype = getobjecttype( ).
+
+* read design layer config for given key
+  SELECT SINGLE * FROM bspc_dl_xmlstrx2 INTO ls_dlc WHERE context_id EQ objname.
+  IF sy-subrc IS NOT INITIAL.
+    RAISE EXCEPTION TYPE zcx_saplink
+  EXPORTING
+    textid = zcx_saplink=&gt;not_found.
+  ENDIF.
+
+  lv_config = ls_dlc-config.
+  lv_params = ls_dlc-parameters.
+  CLEAR: ls_dlc-client, ls_dlc-config, ls_dlc-parameters, ls_dlc-changed_by, ls_dlc-changed_at.
+
+* Create parent node
+  lr_rootnode = xmldoc-&gt;create_element( _objtype ).
+  setattributesfromstructure( node = lr_rootnode structure = ls_dlc ).
+
+* Create dlc config node
+  lr_node = xmldoc-&gt;create_element( me-&gt;mc_node_config ).
+  &quot; Encode xstring BASE64
+  CALL FUNCTION &apos;SCMS_BASE64_ENCODE_STR&apos;
+    EXPORTING
+      input  = lv_config
+    IMPORTING
+      output = lv_string.
+  lr_node-&gt;if_ixml_node~set_value( lv_string ).
+  lv_rc = lr_rootnode-&gt;append_child( lr_node ).
+
+* Create dlc parameters node
+  lr_node = xmldoc-&gt;create_element( me-&gt;mc_node_params ).
+  &quot; Encode xstring BASE64
+  CALL FUNCTION &apos;SCMS_BASE64_ENCODE_STR&apos;
+    EXPORTING
+      input  = lv_params
+    IMPORTING
+      output = lv_string.
+  lr_node-&gt;if_ixml_node~set_value( lv_string ).
+  lv_rc = lr_rootnode-&gt;append_child( lr_node ).
+
+* Finally submit prepared XML
+  lv_rc = xmldoc-&gt;append_child( lr_rootnode ).
+  ixmldocument = xmldoc.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="CREATEOBJECTFROMIXMLDOC" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD createobjectfromixmldoc.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  DATA:
+*dlc variables
+        ls_dlc TYPE bspc_dl_xmlstrx2,
+        lv_config TYPE bsp_dlc_xml_xstring,
+        lv_params TYPE bsp_dlc_xml_xstring,
+        lv_string TYPE string.
+
+  DATA: _objtype   TYPE string,
+        _objname   TYPE nrobj,
+        _devclass  TYPE string,
+*xml nodes
+        lr_rootnode   TYPE REF TO if_ixml_element,
+        lr_node       TYPE REF TO if_ixml_element,
+        lv_rc         TYPE sysubrc.
+
+  _devclass = devclass.
+  _objtype = getobjecttype( ).
+
+*get root element
+  xmldoc = ixmldocument.
+  lr_rootnode = xmldoc-&gt;find_from_name( _objtype ).
+
+*get object attributes
+  CALL METHOD getstructurefromattributes
+    EXPORTING
+      node      = lr_rootnode
+    CHANGING
+      structure = ls_dlc.
+
+  _objname = ls_dlc-context_id.
+  objname = _objname.
+
+  ls_dlc-client = sy-mandt.
+  ls_dlc-changed_by = sy-uname.
+  ls_dlc-changed_at = sy-datum.
+
+*existance check, replace if requred
+  IF checkexists( ) IS NOT INITIAL.
+    IF overwrite IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_saplink
+        EXPORTING
+          textid = zcx_saplink=&gt;existing.
+    ELSE.
+*     delete object for new install
+      deleteobject( ).
+    ENDIF.
+  ENDIF.
+
+*read config
+  lr_node = lr_rootnode-&gt;find_from_name( me-&gt;mc_node_config ).
+  lv_string = lr_node-&gt;get_value( ).
+
+  CALL FUNCTION &apos;SCMS_BASE64_DECODE_STR&apos;
+    EXPORTING
+      input  = lv_string
+    IMPORTING
+      output = ls_dlc-config.
+
+*read parameters
+  lr_node = lr_rootnode-&gt;find_from_name( me-&gt;mc_node_params ).
+  lv_string = lr_node-&gt;get_value( ).
+
+  CALL FUNCTION &apos;SCMS_BASE64_DECODE_STR&apos;
+    EXPORTING
+      input  = lv_string
+    IMPORTING
+      output = ls_dlc-parameters.
+
+*update DLC table
+  MODIFY bspc_dl_xmlstrx2 FROM ls_dlc.
+
+  name = _objname.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="DELETEOBJECT" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>METHOD DELETEOBJECT.
+
+ENDMETHOD.</source>
+ </method>
+ <method CLSNAME="ZSAPLINK" CMPNAME="GETOBJECTTYPE" VERSION="0" EXPOSURE="0" STATE="0" EDITORDER="0 " DISPID="0 " MTDTYPE="0" MTDDECLTYP="0" BCMTDCAT="00" BCMTDSYN="0">
+  <source>method GETOBJECTTYPE.
+*/---------------------------------------------------------------------\
+*|   This file is part of SAPlink.                                     |
+*|                                                                     |
+*|   The code of this project is provided to you under the current     |
+*|   version of the SAP Code Exchange Terms of Use. You can find the   |
+*|   text on the SAP Code Exchange webpage at http://www.sdn.sap.com   |
+*|                                                                     |
+*|   SAPlink is provided to you AS IS with no guarantee, warranty or   |
+*|   support.                                                          |
+*\---------------------------------------------------------------------/
+*      Plugin created by:
+*      Hareesh Polla
+*      hareeshbabu82@gmail.com
+
+  objecttype = &apos;DLCC&apos;.  &quot;DLCC	CRM UIF, Dynamic Layout Configuration / Customer Layer
+
+endmethod.</source>
+ </method>
+</CLAS>

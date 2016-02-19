@@ -20,6 +20,7 @@
 
 # Custom Plugins Developed (dev/plugins)
   * **CLAS_ZSAPLINK_NUMBER_RANGES.slnk** - Number Ranges
+  * **CLAS_ZSAPLINK_DESIGN_LAYER_CONFIG.slnk** - CRM Ui Design Layer Configuration
 
 # Installing SAPLink
   * for latest **SAPLINK** installer zip, check [SAPLink Wiki](https://www.assembla.com/spaces/saplink-plugins/wiki)
@@ -28,7 +29,7 @@
   * Execute the report and provide **SAPlink_Daily.nugg** as input (Note: import it twice to avoid importing issues)
   * Activate all ***Worklist*** objects in **$TMP**
   * Use **SAPLINK** report to import/export Nuggets and SLinkees.
-  
+
 ## Header Info
 ```
 */---------------------------------------------------------------------\
