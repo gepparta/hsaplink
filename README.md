@@ -12,15 +12,20 @@
 ## SAPLink Plugin
 * Should inherit from Super class **ZSAPLINK**
 * Implement following minimum methods for a Plugin
-  * **GETOBJECTTYPE** - return SAP Object Type which this Plugin is handling (ex. CLAS, TTYP ..)
-  * **CHECKEXISTS** - check if the object to be imported already exist
-  * **CREATEIXMLDOCFROMOBJECT** - prepare XML document with attributes and Childs in **IXMLDOCUMENT** parameter
-  * **CREATEOBJECTFROMIXMLDOC** - fetch XML from import parameter **IXMLDOCUMENT** and create into SAP DB
-  * **DELETEOBJECT** - delete object if Overwrite is selected
+
+|Method|Usage|
+|---|---|
+|**GETOBJECTTYPE** | return SAP Object Type which this Plugin is handling (ex. CLAS, TTYP ..) |
+|**CHECKEXISTS** | check if the object to be imported already exist|
+| **CREATEIXMLDOCFROMOBJECT** | prepare XML document with attributes and Childs in **IXMLDOCUMENT** parameter |
+| **CREATEOBJECTFROMIXMLDOC** | fetch XML from import parameter **IXMLDOCUMENT** and create into SAP DB |
+| **DELETEOBJECT** | delete object if Overwrite is selected |
 
 # Custom Plugins Developed (dev/plugins)
-  * **CLAS_ZSAPLINK_NUMBER_RANGES.slnk** - Number Ranges
-  * **CLAS_ZSAPLINK_DESIGN_LAYER_CONFIG.slnk** - CRM Ui Design Layer Configuration
+  |SLinkee|Usage|
+  |--|--|
+  | **CLAS_ZSAPLINK_NUMBER_RANGES** | Number Ranges|
+  | **CLAS_ZSAPLINK_DESIGN_LAYER_CONFIG** | CRM Ui Design Layer Configuration|
 
 # Installing SAPLink
   * for latest **SAPLINK** installer zip, check [SAPLink Wiki](https://www.assembla.com/spaces/saplink-plugins/wiki)
