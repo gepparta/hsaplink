@@ -22,10 +22,10 @@
 | **DELETEOBJECT** | delete object if Overwrite is selected |
 
 # Custom Plugins Developed (dev/plugins)
-  |SLinkee|Usage|
-  |---|---|
-  | **CLAS_ZSAPLINK_NUMBER_RANGES** | Number Ranges|
-  | **CLAS_ZSAPLINK_DESIGN_LAYER_CONFIG** | CRM Ui Design Layer Configuration|
+|SLinkee|Usage|
+|---|---|
+| **CLAS_ZSAPLINK_NUMBER_RANGES** | Number Ranges|
+| **CLAS_ZSAPLINK_DESIGN_LAYER_CONFIG** | CRM Ui Design Layer Configuration|
 
 # Installing SAPLink
   * for latest **SAPLINK** installer zip, check [SAPLink Wiki](https://www.assembla.com/spaces/saplink-plugins/wiki)
