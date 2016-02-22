@@ -23,7 +23,7 @@
 
 # Custom Plugins Developed (dev/plugins)
   |SLinkee|Usage|
-  |--|--|
+  |---|---|
   | **CLAS_ZSAPLINK_NUMBER_RANGES** | Number Ranges|
   | **CLAS_ZSAPLINK_DESIGN_LAYER_CONFIG** | CRM Ui Design Layer Configuration|
 
